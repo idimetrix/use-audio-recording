@@ -47,7 +47,10 @@ const AudioRecorder: React.FC = () => {
     stopRecording,
     completeRecording,
     isRecording,
-    isPaused
+    isPaused,
+    duration,
+    error,
+    clearError
   } = useAudioRecording();
 
   const [audioSrc, setAudioSrc] = useState<string | null>(null);
@@ -213,9 +216,26 @@ export default AdvancedAudioRecorder;
 
 ## API Reference
 
-### `useAudioRecording()`
+### `useAudioRecording(config?)`
 
-The main hook that provides audio recording functionality.
+The main hook that provides audio recording functionality with optional configuration.
+
+#### Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `config` | `AudioRecordingConfig?` | Optional configuration object |
+
+#### Configuration Options
+
+```typescript
+interface AudioRecordingConfig {
+  /** Audio constraints for getUserMedia */
+  audioConstraints?: MediaStreamConstraints['audio'];
+  /** MIME type for the recorded audio */
+  mimeType?: string;
+}
+```
 
 #### Returns
 
@@ -230,6 +250,9 @@ An object containing the following properties and methods:
 | `completeRecording` | `() => Promise<string \| null>` | Completes recording and returns a blob URL for the recorded audio. |
 | `isRecording` | `boolean` | Indicates whether recording is currently active. |
 | `isPaused` | `boolean` | Indicates whether recording is currently paused. |
+| `duration` | `number` | Current recording duration in seconds. |
+| `error` | `AudioRecordingError \| null` | Any error that occurred during recording. |
+| `clearError` | `() => void` | Clear the current error state. |
 
 #### Methods
 
@@ -396,6 +419,18 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - GitHub: [idimetrix](https://github.com/idimetrix)
 
 ## Changelog
+
+### 2.0.0 🎉
+- **BREAKING**: Enhanced API with new return properties (`duration`, `error`, `clearError`)
+- **BREAKING**: `startRecording` now returns a Promise for better error handling
+- Added comprehensive error handling with custom error types
+- Added duration tracking with real-time updates
+- Added configuration options for audio constraints and MIME types
+- Enhanced TypeScript definitions with complete type safety
+- Improved memory management with proper stream cleanup
+- Added comprehensive test coverage (67%+ code coverage)
+- Updated all dependencies to latest versions (React 19, Jest 30, etc.)
+- Professional code architecture with useCallback optimizations
 
 ### 1.0.3
 - Updated all dependencies to latest versions

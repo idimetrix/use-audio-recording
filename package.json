@@ -1,6 +1,6 @@
 {
   "name": "use-audio-recording",
-  "version": "1.0.3",
+  "version": "2.0.0",
   "description": "A professional React hook for audio recording with TypeScript support",
   "license": "MIT",
   "author": {
@@ -66,6 +66,7 @@
     "react": "19.1.1"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "6.8.0",
     "@testing-library/react": "16.3.0",
     "@types/jest": "30.0.0",
     "@types/node": "24.5.2",
