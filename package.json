@@ -1,7 +1,7 @@
 {
   "name": "use-audio-recording",
-  "version": "1.0.2",
-  "description": "Use Audio Recording",
+  "version": "1.0.3",
+  "description": "A professional React hook for audio recording with TypeScript support",
   "license": "MIT",
   "author": {
     "name": "Dmitrii Selikhov",
@@ -36,10 +36,21 @@
   "bugs": {
     "url": "https://github.com/idimetrix/use-audio-recording/issues"
   },
-  "keywords": [],
+  "keywords": [
+    "react",
+    "audio",
+    "recording",
+    "microphone",
+    "media",
+    "webapi",
+    "typescript",
+    "hook",
+    "react-hook"
+  ],
   "files": [
     "dist",
-    "package.json"
+    "README.md",
+    "LICENSE"
   ],
   "types": "./dist/index.d.ts",
   "main": "./dist/index.js",
@@ -52,19 +63,23 @@
     }
   },
   "dependencies": {
-    "react": "18.3.1"
+    "react": "19.1.1"
   },
   "devDependencies": {
-    "@types/node": "22.5.5",
-    "@types/jest": "29.5.13",
-    "husky": "9.1.6",
-    "jest": "29.7.0",
-    "lint-staged": "15.2.10",
-    "nodemon": "3.1.7",
-    "prettier": "3.3.3",
-    "ts-jest": "29.2.5",
+    "@testing-library/react": "16.3.0",
+    "@types/jest": "30.0.0",
+    "@types/node": "24.5.2",
+    "@types/react": "19.1.13",
+    "husky": "9.1.7",
+    "jest": "30.1.3",
+    "jest-environment-jsdom": "30.1.2",
+    "lint-staged": "16.2.0",
+    "nodemon": "3.1.10",
+    "prettier": "3.6.2",
+    "react-dom": "19.1.1",
+    "ts-jest": "29.4.4",
     "ts-node": "10.9.2",
-    "tsup": "8.3.0",
-    "typescript": "5.6.2"
+    "tsup": "8.5.0",
+    "typescript": "5.9.2"
   }
 }
