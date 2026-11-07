@@ -4,7 +4,11 @@ import { useState, useRef, useCallback } from "react";
  * Audio recording error types
  */
 export interface AudioRecordingError extends Error {
-  name: 'NotAllowedError' | 'NotFoundError' | 'NotSupportedError' | 'AudioRecordingError';
+  name:
+    | "NotAllowedError"
+    | "NotFoundError"
+    | "NotSupportedError"
+    | "AudioRecordingError";
   message: string;
 }
 
@@ -13,7 +17,7 @@ export interface AudioRecordingError extends Error {
  */
 export interface AudioRecordingConfig {
   /** Audio constraints for getUserMedia */
-  audioConstraints?: MediaStreamConstraints['audio'];
+  audioConstraints?: MediaStreamConstraints["audio"];
   /** MIME type for the recorded audio */
   mimeType?: string;
 }
@@ -46,16 +50,18 @@ export interface UseAudioRecording {
 
 /**
  * A professional React hook for audio recording with comprehensive error handling and TypeScript support
- * 
+ *
  * @param config - Optional configuration for audio recording
  * @returns Audio recording state and control functions
  */
-export const useAudioRecording = (config: AudioRecordingConfig = {}): UseAudioRecording => {
+export const useAudioRecording = (
+  config: AudioRecordingConfig = {},
+): UseAudioRecording => {
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [isPaused, setIsPaused] = useState<boolean>(false);
   const [duration, setDuration] = useState<number>(0);
   const [error, setError] = useState<AudioRecordingError | null>(null);
-  
+
   const mediaRecorder = useRef<MediaRecorder | null>(null);
   const audioChunks = useRef<Blob[]>([]);
   const streamRef = useRef<MediaStream | null>(null);
@@ -80,17 +86,24 @@ export const useAudioRecording = (config: AudioRecordingConfig = {}): UseAudioRe
     }, 1000);
   }, []);
 
-  const createAudioRecordingError = useCallback((originalError: unknown, context: string): AudioRecordingError => {
-    if (originalError instanceof DOMException) {
-      const error = new Error(`${context}: ${originalError.message}`) as AudioRecordingError;
-      error.name = originalError.name as AudioRecordingError['name'];
+  const createAudioRecordingError = useCallback(
+    (originalError: unknown, context: string): AudioRecordingError => {
+      if (originalError instanceof DOMException) {
+        const error = new Error(
+          `${context}: ${originalError.message}`,
+        ) as AudioRecordingError;
+        error.name = originalError.name as AudioRecordingError["name"];
+        return error;
+      }
+
+      const error = new Error(
+        `${context}: ${String(originalError)}`,
+      ) as AudioRecordingError;
+      error.name = "AudioRecordingError";
       return error;
-    }
-    
-    const error = new Error(`${context}: ${String(originalError)}`) as AudioRecordingError;
-    error.name = 'AudioRecordingError';
-    return error;
-  }, []);
+    },
+    [],
+  );
 
   const startRecording = useCallback(async (): Promise<void> => {
     if (isRecording) {
@@ -99,37 +112,44 @@ export const useAudioRecording = (config: AudioRecordingConfig = {}): UseAudioRe
 
     // Check for browser support
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      const error = new Error('MediaRecorder API is not supported in this browser') as AudioRecordingError;
-      error.name = 'NotSupportedError';
+      const error = new Error(
+        "MediaRecorder API is not supported in this browser",
+      ) as AudioRecordingError;
+      error.name = "NotSupportedError";
       setError(error);
       throw error;
     }
 
     if (!window.MediaRecorder) {
-      const error = new Error('MediaRecorder is not supported in this browser') as AudioRecordingError;
-      error.name = 'NotSupportedError';
+      const error = new Error(
+        "MediaRecorder is not supported in this browser",
+      ) as AudioRecordingError;
+      error.name = "NotSupportedError";
       setError(error);
       throw error;
     }
 
     try {
       setError(null);
-      
+
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: config.audioConstraints ?? true,
       });
-      
+
       streamRef.current = stream;
       audioChunks.current = [];
       setDuration(0);
 
       // Determine the best MIME type
-      const mimeType = config.mimeType ?? (
-        MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? 'audio/webm;codecs=opus' :
-        MediaRecorder.isTypeSupported('audio/mp4') ? 'audio/mp4' :
-        MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' :
-        undefined
-      );
+      const mimeType =
+        config.mimeType ??
+        (MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
+          ? "audio/webm;codecs=opus"
+          : MediaRecorder.isTypeSupported("audio/mp4")
+            ? "audio/mp4"
+            : MediaRecorder.isTypeSupported("audio/webm")
+              ? "audio/webm"
+              : undefined);
 
       const options = mimeType ? { mimeType } : undefined;
       mediaRecorder.current = new MediaRecorder(stream, options);
@@ -144,16 +164,16 @@ export const useAudioRecording = (config: AudioRecordingConfig = {}): UseAudioRe
         setIsRecording(false);
         setIsPaused(false);
         stopDurationTimer();
-        
+
         // Clean up the stream
         if (streamRef.current) {
-          streamRef.current.getTracks().forEach(track => track.stop());
+          streamRef.current.getTracks().forEach((track) => track.stop());
           streamRef.current = null;
         }
       };
 
       mediaRecorder.current.onerror = (event) => {
-        const error = createAudioRecordingError(event, 'MediaRecorder error');
+        const error = createAudioRecordingError(event, "MediaRecorder error");
         setError(error);
         setIsRecording(false);
         setIsPaused(false);
@@ -164,47 +184,80 @@ export const useAudioRecording = (config: AudioRecordingConfig = {}): UseAudioRe
       setIsRecording(true);
       startDurationTimer();
     } catch (originalError) {
-      const error = createAudioRecordingError(originalError, 'Failed to start recording');
+      const error = createAudioRecordingError(
+        originalError,
+        "Failed to start recording",
+      );
       setError(error);
       throw error;
     }
-  }, [isRecording, config.audioConstraints, config.mimeType, createAudioRecordingError, startDurationTimer, stopDurationTimer]);
+  }, [
+    isRecording,
+    config.audioConstraints,
+    config.mimeType,
+    createAudioRecordingError,
+    startDurationTimer,
+    stopDurationTimer,
+  ]);
 
   const pauseRecording = useCallback((): void => {
-    if (isRecording && !isPaused && mediaRecorder.current && mediaRecorder.current.state === 'recording') {
+    if (
+      isRecording &&
+      !isPaused &&
+      mediaRecorder.current &&
+      mediaRecorder.current.state === "recording"
+    ) {
       try {
         mediaRecorder.current.pause();
         setIsPaused(true);
         stopDurationTimer();
         setError(null);
       } catch (originalError) {
-        const error = createAudioRecordingError(originalError, 'Failed to pause recording');
+        const error = createAudioRecordingError(
+          originalError,
+          "Failed to pause recording",
+        );
         setError(error);
       }
     }
   }, [isRecording, isPaused, createAudioRecordingError, stopDurationTimer]);
 
   const resumeRecording = useCallback((): void => {
-    if (isRecording && isPaused && mediaRecorder.current && mediaRecorder.current.state === 'paused') {
+    if (
+      isRecording &&
+      isPaused &&
+      mediaRecorder.current &&
+      mediaRecorder.current.state === "paused"
+    ) {
       try {
         mediaRecorder.current.resume();
         setIsPaused(false);
         startDurationTimer();
         setError(null);
       } catch (originalError) {
-        const error = createAudioRecordingError(originalError, 'Failed to resume recording');
+        const error = createAudioRecordingError(
+          originalError,
+          "Failed to resume recording",
+        );
         setError(error);
       }
     }
   }, [isRecording, isPaused, createAudioRecordingError, startDurationTimer]);
 
   const stopRecording = useCallback((): void => {
-    if (isRecording && mediaRecorder.current && mediaRecorder.current.state !== 'inactive') {
+    if (
+      isRecording &&
+      mediaRecorder.current &&
+      mediaRecorder.current.state !== "inactive"
+    ) {
       try {
         mediaRecorder.current.stop();
         setError(null);
       } catch (originalError) {
-        const error = createAudioRecordingError(originalError, 'Failed to stop recording');
+        const error = createAudioRecordingError(
+          originalError,
+          "Failed to stop recording",
+        );
         setError(error);
         // Force cleanup even if stop failed
         setIsRecording(false);
@@ -221,9 +274,9 @@ export const useAudioRecording = (config: AudioRecordingConfig = {}): UseAudioRe
       }
 
       // Determine the MIME type from the recorded chunks or use a default
-      const mimeType = config.mimeType ?? 'audio/webm';
+      const mimeType = config.mimeType ?? "audio/webm";
       const audioBlob = new Blob(audioChunks.current, { type: mimeType });
-      
+
       if (audioBlob.size === 0) {
         return null;
       }
@@ -232,7 +285,10 @@ export const useAudioRecording = (config: AudioRecordingConfig = {}): UseAudioRe
       setError(null);
       return audioUrl;
     } catch (originalError) {
-      const error = createAudioRecordingError(originalError, 'Failed to complete recording');
+      const error = createAudioRecordingError(
+        originalError,
+        "Failed to complete recording",
+      );
       setError(error);
       throw error;
     }

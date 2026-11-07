@@ -6,7 +6,7 @@ describe("useAudioRecording", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Create fresh mock for each test
     mockMediaRecorder = {
       start: jest.fn(),
@@ -20,8 +20,12 @@ describe("useAudioRecording", () => {
     };
 
     // Update the mock implementation
-    const MockMediaRecorder = jest.fn().mockImplementation(() => mockMediaRecorder);
-    (MockMediaRecorder as any).isTypeSupported = jest.fn().mockReturnValue(true);
+    const MockMediaRecorder = jest
+      .fn()
+      .mockImplementation(() => mockMediaRecorder);
+    (MockMediaRecorder as any).isTypeSupported = jest
+      .fn()
+      .mockReturnValue(true);
     (global.MediaRecorder as any) = MockMediaRecorder;
   });
 
@@ -115,8 +119,13 @@ describe("useAudioRecording", () => {
   });
 
   test("should handle error when getUserMedia fails", async () => {
-    const mockGetUserMedia = jest.fn().mockRejectedValue(new DOMException("Permission denied", "NotAllowedError"));
-    (global.navigator.mediaDevices.getUserMedia as jest.Mock) = mockGetUserMedia;
+    const mockGetUserMedia = jest
+      .fn()
+      .mockRejectedValue(
+        new DOMException("Permission denied", "NotAllowedError"),
+      );
+    (global.navigator.mediaDevices.getUserMedia as jest.Mock) =
+      mockGetUserMedia;
 
     const { result } = renderHook(() => useAudioRecording());
 
@@ -134,8 +143,11 @@ describe("useAudioRecording", () => {
   });
 
   test("should clear error when clearError is called", async () => {
-    const mockGetUserMedia = jest.fn().mockRejectedValue(new Error("Test error"));
-    (global.navigator.mediaDevices.getUserMedia as jest.Mock) = mockGetUserMedia;
+    const mockGetUserMedia = jest
+      .fn()
+      .mockRejectedValue(new Error("Test error"));
+    (global.navigator.mediaDevices.getUserMedia as jest.Mock) =
+      mockGetUserMedia;
 
     const { result } = renderHook(() => useAudioRecording());
 
@@ -170,10 +182,12 @@ describe("useAudioRecording", () => {
 
   test("should track duration", async () => {
     jest.useFakeTimers();
-    
+
     // Reset the global mock for this test to allow getUserMedia to succeed
-    (global.navigator.mediaDevices.getUserMedia as jest.Mock).mockResolvedValue({});
-    
+    (global.navigator.mediaDevices.getUserMedia as jest.Mock).mockResolvedValue(
+      {},
+    );
+
     const { result } = renderHook(() => useAudioRecording());
 
     await act(async () => {

@@ -3,7 +3,7 @@
  */
 
 // Extend Jest matchers
-import '@testing-library/jest-dom';
+import "@testing-library/jest-dom";
 
 // Global test setup for DOM environment
 const MockMediaRecorder = jest.fn().mockImplementation(() => ({
@@ -14,29 +14,27 @@ const MockMediaRecorder = jest.fn().mockImplementation(() => ({
   ondataavailable: null,
   onstop: null,
   onerror: null,
-  state: 'inactive',
+  state: "inactive",
 }));
 
 // Add static method
 (MockMediaRecorder as any).isTypeSupported = jest.fn().mockReturnValue(true);
 
-Object.defineProperty(global, 'MediaRecorder', {
+Object.defineProperty(global, "MediaRecorder", {
   writable: true,
   value: MockMediaRecorder,
 });
 
-Object.defineProperty(global.navigator, 'mediaDevices', {
+Object.defineProperty(global.navigator, "mediaDevices", {
   writable: true,
   value: {
     getUserMedia: jest.fn().mockResolvedValue({
-      getTracks: jest.fn().mockReturnValue([
-        { stop: jest.fn() }
-      ])
+      getTracks: jest.fn().mockReturnValue([{ stop: jest.fn() }]),
     }),
   },
 });
 
-Object.defineProperty(global.URL, 'createObjectURL', {
+Object.defineProperty(global.URL, "createObjectURL", {
   writable: true,
-  value: jest.fn().mockReturnValue('mock-url'),
+  value: jest.fn().mockReturnValue("mock-url"),
 });
